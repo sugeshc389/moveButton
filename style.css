@@ -2,13 +2,12 @@ body {
     background-color: black;
     color: rgb(51, 147, 22);
     text-align: center;
-
 }
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    grid-template-rows: repeat(10, 1fr);
+    grid-template-columns: repeat(10, auto);
+    grid-template-rows: repeat(10, auto);
     width: 600px;
     height: 600px;
     gap: 1px;
@@ -16,17 +15,23 @@ body {
 
 .grid-item {
     background-color: transparent;
-    border: 1px solid #fff;
+    border: 1px solid #948989;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .button {
-    grid-column: 1;
-    grid-row: 1;
-    background-color: rgb(51, 147, 22);
-    color: #fff;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    resize: both;
+    overflow: hidden;
+    min-width: 40px;
+    min-height: 20px;
+    max-width: 200px;
+    max-height: 100px;
+    width: 80px;
+    height: 40px;
+    background-color: #3498db;
+    color: #ffffff;
     cursor: pointer;
+    user-select: none;
 }

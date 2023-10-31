@@ -1,36 +1,73 @@
 const grid = document.querySelector(".grid");
+const button = document.getElementById("resizableButton");
 
-for (let i = 2; i <= 100; i++) {
+for (let i = 1; i < 100; i++) {
     const cell = document.createElement("div");
     cell.classList.add("grid-item");
-    cell.textContent = i;
+    cell.textContent = i + 1;
     grid.appendChild(cell);
 }
 
-const button = document.getElementById("button");
 let isDragging = false;
+let isResizing = false;
+let startX, startY, initialX, initialY;
+let startWidth, startHeight;
 
 button.addEventListener("mousedown", (e) => {
-    isDragging = true;
-    button.style.zIndex = "1";
+    if (e.target === button) {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        initialX = button.getBoundingClientRect().left;
+        initialY = button.getBoundingClientRect().top;
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
+    }
 });
 
-grid.addEventListener("mouseup", () => {
-    isDragging = false;
-    button.style.zIndex = "0";
-});
-grid.addEventListener("mousemove", (e) => {
+function onMouseMove(e) {
     if (isDragging) {
-        const column = Math.min(10, Math.max(1, Math.floor(e.clientX / (grid.offsetWidth / 10)) + 1));
-        const row = Math.min(10, Math.max(1, Math.floor(e.clientY / (grid.offsetHeight / 10)) + 1));
-        button.style.gridColumn = column;
-        button.style.gridRow = row;
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+        const newLeft = initialX + deltaX;
+        const newTop = initialY + deltaY;
+        button.style.left = newLeft + "px";
+        button.style.top = newTop + "px";
     }
+}
 
-    if (isResizing) {
-        const width = Math.min(10, Math.max(1, Math.floor(e.clientX / (grid.offsetWidth / 10)) + 1));
-        const height = Math.min(10, Math.max(1, Math.floor(e.clientY / (grid.offsetHeight / 10)) + 1));
-        button.style.gridColumn = "auto / span " + width;
-        button.style.gridRow = "auto / span " + height;
+function onMouseUp() {
+    isDragging = false;
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+}
+
+button.addEventListener("mousedown", (e) => {
+    if (e.target === button) {
+        e.preventDefault();
+        isResizing = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startWidth = button.offsetWidth;
+        startHeight = button.offsetHeight;
+        document.addEventListener("mousemove", onMouseMoveResize);
+        document.addEventListener("mouseup", onMouseUpResize);
     }
 });
+
+function onMouseMoveResize(e) {
+    if (isResizing) {
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+        const newWidth = startWidth + deltaX;
+        const newHeight = startHeight + deltaY;
+        button.style.width = newWidth + "px";
+        button.style.height = newHeight + "px";
+    }
+}
+
+function onMouseUpResize() {
+    isResizing = false;
+    document.removeEventListener("mousemove", onMouseMoveResize);
+    document.removeEventListener("mouseup", onMouseUpResize);
+}
